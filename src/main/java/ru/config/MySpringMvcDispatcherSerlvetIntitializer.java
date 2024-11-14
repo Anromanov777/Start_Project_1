@@ -1,4 +1,4 @@
-package config;
+package ru.config;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterRegistration;
