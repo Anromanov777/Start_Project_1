@@ -6,13 +6,26 @@
 </head>
 <body>
 <p th:text="${person.name+'  '+person.age}"></p>
-<br>
-<form th:action="@{edit/{id}(id=${person.id})}">
+
+<p th:if="${list.isEmpty()}">Человек пока не взял ни одной книги</p>
+
+<div th:unless="${list.isEmpty()}">
+    <p style="display: inline-block">Взятые книги: </p>
+    <div style="display: inline-block" th:each="book:${list}">
+        <p th:text="${book.name}+' , '"></p>
+    </div>
+
+</div>
+<form th:action="@{{id}/edit(id=${person.id})}">
     <input type="submit" value="Редактировать">
 </form>
 <br>
 <form th:method="DELETE" th:action="@{{id}(id=${person.id})}">
-    <input type="submit" value="Удалить">
+    <input type="submit" value="Удалить запись о человеке">
+</form>
+<br>
+<form th:method="GET" th:action="@{/}">
+    <input type="submit" value="На главную">
 </form>
 </body>
 </html>

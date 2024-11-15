@@ -13,7 +13,8 @@
     <input type="text" id="age" th:field="*{age}">
     </br>
     <label for="email">Емайл человека</label>
-    <input type="text" id="email" th:field="*{email}">
+    <input style="display: inline" type="text" id="email" th:field="*{email}">
+    <p style="display: inline;color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
     </br>
 
     <input type="submit" value="Сохранить данные">

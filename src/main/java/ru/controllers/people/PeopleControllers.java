@@ -1,20 +1,24 @@
 package ru.controllers.people;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.dao.PeopleDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import ru.model.Book;
 import ru.model.Person;
+import ru.util.PersonValid;
 
 @Controller
 @RequestMapping("/people")
 public class PeopleControllers {
-
+    private final PersonValid personValid;
     private final PeopleDAO peopleDAO;
 
     @Autowired
-    public PeopleControllers(PeopleDAO peopleDAO) {
+    public PeopleControllers(PersonValid personValid, PeopleDAO peopleDAO) {
+        this.personValid = personValid;
         this.peopleDAO = peopleDAO;
     }
 
@@ -26,11 +30,13 @@ public class PeopleControllers {
 
     @GetMapping("/new")
     public String creat(@ModelAttribute("person") Person person) {
-        return "people/creat";
+        return "people/new";
     }
 
     @PostMapping
-    public String save(@ModelAttribute Person person) {
+    public String save(@ModelAttribute Person person, BindingResult bindingResult) {
+        personValid.validate(person, bindingResult);
+        if (bindingResult.hasErrors()) return "people/new";
         peopleDAO.save(person);
         return "redirect:/people";
     }
@@ -38,10 +44,11 @@ public class PeopleControllers {
     @GetMapping("{id}")
     public String read(@PathVariable("id") int id, Model model) {
         model.addAttribute("person", peopleDAO.getPerson(id));
+        model.addAttribute("list", peopleDAO.checkFree(id));
         return "people/read";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") int id, Model model) {
         model.addAttribute("person", peopleDAO.getPerson(id));
         return "people/edit";
@@ -55,7 +62,7 @@ public class PeopleControllers {
     }
 
     @DeleteMapping("{id}")
-    public String delete(@PathVariable("id") int id){
+    public String delete(@PathVariable("id") int id) {
         peopleDAO.delete(id);
         return "redirect:/people";
     }
